@@ -3,6 +3,8 @@
  * Modified to match https://github.com/ValveSoftware/halflife/blob/master/pm_shared/pm_shared.c
  */
 
+using System;
+//using System.Numerics;
 using System.Reflection;
 
 using GameNetcodeStuff;
@@ -29,6 +31,7 @@ namespace lcbhop {
         /* Movement stuff */
         public float maxspeed = Plugin.cfg.maxspeed;            // Max speed
         public float movespeed = Plugin.cfg.movespeed;          // Ground speed (like cl_forwardspeed etc.)
+        public float walkspeed = Plugin.cfg.walkspeed;
         public float accelerate = Plugin.cfg.accelerate;        // Ground acceleration
         public float airaccelerate = Plugin.cfg.airaccelerate;  // Air acceleration
         public float stopspeed = Plugin.cfg.stopspeed;          // Ground deceleration
@@ -54,9 +57,9 @@ namespace lcbhop {
             // Allow crouching while mid air
             player.fallValue = 0.0f;
             // Disables fall damage
-            player.fallValueUncapped = 0.0f;
-            // Disable stamina
-            player.sprintMeter = 1.0f;
+            if ( !Plugin.cfg.falldmg ) { player.fallValueUncapped = 0.0f; }
+            // Disable stamina drain if toggle is false
+            if ( !Plugin.cfg.staminadrain ) { player.sprintMeter = 1.0f; }
 
             if ( ( !player.IsOwner || !player.isPlayerControlled || ( player.IsServer && !player.isHostPlayerObject ) ) && !player.isTestingPlayer ) {
                 return;
@@ -119,9 +122,27 @@ namespace lcbhop {
         /*
          * Sets the movement direction based on player input
          */
+        //private void SetMovementDir( ) {
+        //    //if ( _controller.isGrounded ) { movespeed }
+        //    _cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * movespeed;
+        //    _cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * movespeed;
+        //}
+
         private void SetMovementDir( ) {
-            _cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * movespeed;
-            _cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * movespeed;
+            float speed = 0;
+            Console.Out.WriteLine( player.playerActions.Movement.Sprint.ReadValue<float>( ) );
+            if (player.playerActions.Movement.Sprint.ReadValue<float>( ) == 1){ // checks if player is sprinting or not and sets ground speed
+                speed = movespeed;
+                Console.Out.WriteLine( "sprinting" );
+
+            } else { //if ( player.playerActions.Movement.Sprint.ReadValue<float>( ) == 0 ) {
+                speed = walkspeed;
+                Console.Out.WriteLine( "walking" );
+
+            }
+            Console.Out.WriteLine( "Speed: " + speed );
+            _cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * speed;
+            _cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * speed;
         }
 
         /*
