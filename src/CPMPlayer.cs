@@ -151,12 +151,11 @@ namespace lcbhop {
          * Checks for jump input
          */
         private void Jump( ) {
-            if ( Plugin.cfg.autobhop )
+            if ( Plugin.cfg.autobhop ) {
                 wishJump = player.playerActions.Movement.Jump.ReadValue<float>( ) > 0.0f;
-            //wishJump = player.isJumping; // private var, assembly needs to be Publicized
-            else {
-                if ( !wishJump )
-                    wishJump = player.playerActions.Movement.SwitchItem.ReadValue<float>( ) != 0.0f;
+                //wishJump = player.isJumping; // private var, assembly needs to be Publicized
+            } else if ( !wishJump ) { 
+                wishJump = player.playerActions.Movement.SwitchItem.ReadValue<float>( ) != 0.0f;
             }
 
             if ( !Plugin.cfg.enablebunnyhopping )
