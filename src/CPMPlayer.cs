@@ -130,27 +130,30 @@ namespace lcbhop {
 
         private void SetMovementDir( ) {
             float speed = 0;
-            Console.Out.WriteLine( player.playerActions.Movement.Sprint.ReadValue<float>( ) );
-            if (player.playerActions.Movement.Sprint.ReadValue<float>( ) == 1){ // checks if player is sprinting or not and sets ground speed
+            //Console.Out.WriteLine( player.playerActions.Movement.Sprint.ReadValue<float>( ) );
+            //if ( player.playerActions.Movement.Sprint.ReadValue<float>( ) == 1 && player.sprintMeter > 0 ) { // checks if player is sprinting or not and sets ground speed
+            if ( player.isSprinting ) { // checks if player is sprinting or not and sets ground speed
                 speed = movespeed;
-                Console.Out.WriteLine( "sprinting" );
-
+                //Console.Out.WriteLine( "sprinting" );
             } else { //if ( player.playerActions.Movement.Sprint.ReadValue<float>( ) == 0 ) {
                 speed = walkspeed;
-                Console.Out.WriteLine( "walking" );
-
+                //Console.Out.WriteLine( "walking" );
             }
-            Console.Out.WriteLine( "Speed: " + speed );
-            _cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * speed;
-            _cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * speed;
-        }
+            //Console.Out.WriteLine( "Speed: " + speed );
 
+            //_cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * speed;
+            //_cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * speed;
+            _cmd.forwardMove = player.moveInputVector.y * speed; // Reading from player Vector2 instead of unity Action
+            _cmd.rightMove = player.moveInputVector.x * speed;
+        }
+        
         /*
          * Checks for jump input
          */
         private void Jump( ) {
             if ( Plugin.cfg.autobhop )
                 wishJump = player.playerActions.Movement.Jump.ReadValue<float>( ) > 0.0f;
+            //wishJump = player.isJumping; // private var, assembly needs to be Publicized
             else {
                 if ( !wishJump )
                     wishJump = player.playerActions.Movement.SwitchItem.ReadValue<float>( ) != 0.0f;
