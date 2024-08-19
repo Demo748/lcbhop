@@ -59,6 +59,45 @@ namespace lcbhop {
         }
     }
 
+    [HarmonyPatch( typeof( PlayerControllerB ), "PlayerHitGroundEffects" )]
+    class PlayerHitGroundEffects_Patch {
+        
+        [HarmonyPrefix]
+        internal static bool Prefix( PlayerControllerB __instance ) {
+            double fallMultiplier = 1.7;
+            __instance.GetCurrentMaterialStandingOn( );
+            if ( __instance.fallValueUncapped < -9f ) {
+                if ( __instance.fallValueUncapped < -16f ) {
+                    __instance.movementAudio.PlayOneShot( StartOfRound.Instance.playerHitGroundSoft, 1f );
+                    WalkieTalkie.TransmitOneShotAudio( __instance.movementAudio, StartOfRound.Instance.playerHitGroundHard, 1f );
+                } else if ( __instance.fallValueUncapped < -2f ) {
+                    __instance.movementAudio.PlayOneShot( StartOfRound.Instance.playerHitGroundSoft, 1f );
+                }
+                __instance.LandFromJumpServerRpc( __instance.fallValueUncapped < -16f );
+            }
+            float num = __instance.fallValueUncapped;
+            if ( __instance.disabledJetpackControlsThisFrame && Vector3.Angle( __instance.transform.up, Vector3.up ) > 80f ) {
+                num -= 10f;
+            }
+            if ( __instance.takingFallDamage && !__instance.isSpeedCheating ) {
+                if ( __instance.fallValueUncapped < -48.5f * fallMultiplier ) {
+                    __instance.DamagePlayer( 100, true, true, CauseOfDeath.Gravity, 0, false, default( Vector3 ) );
+                } else if ( __instance.fallValueUncapped < -45f * fallMultiplier ) {
+                    __instance.DamagePlayer( 80, true, true, CauseOfDeath.Gravity, 0, false, default( Vector3 ) );
+                } else if ( __instance.fallValueUncapped < -40f * fallMultiplier ) {
+                    __instance.DamagePlayer( 50, true, true, CauseOfDeath.Gravity, 0, false, default( Vector3 ) );
+                } else if ( __instance.fallValue < -38f * fallMultiplier ) {
+                    __instance.DamagePlayer( 30, true, true, CauseOfDeath.Gravity, 0, false, default( Vector3 ) );
+                }
+            }
+            if ( __instance.fallValueUncapped < -16f ) {
+                RoundManager.Instance.PlayAudibleNoise( __instance.transform.position, 7f, 0.5f, 0, false, 0 );
+            }
+
+            return false;
+        }
+    }
+
     [HarmonyPatch( typeof( HUDManager ), "SubmitChat_performed" )]
     class SubmitChat_performed_Patch {
         [HarmonyPrefix]

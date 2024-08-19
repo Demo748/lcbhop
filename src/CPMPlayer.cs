@@ -57,9 +57,11 @@ namespace lcbhop {
             // Allow crouching while mid air
             player.fallValue = 0.0f;
             // Disables fall damage
-            if ( !Plugin.cfg.falldmg ) { player.fallValueUncapped = 0.0f; }
+            if ( !Plugin.cfg.falldmg ) { player.fallValueUncapped = 0.0f; } //else { player.fallValueUncapped }
             // Disable stamina drain if toggle is false
             if ( !Plugin.cfg.staminadrain ) { player.sprintMeter = 1.0f; }
+
+            //Console.WriteLine( "fallValue: " + player.fallValue + " \tfallValueUncapped: " + player.fallValueUncapped + " \ttaking damage: " + player.takingFallDamage + " \t" + player.health );
 
             if ( ( !player.IsOwner || !player.isPlayerControlled || ( player.IsServer && !player.isHostPlayerObject ) ) && !player.isTestingPlayer ) {
                 return;
@@ -131,7 +133,7 @@ namespace lcbhop {
         private void SetMovementDir( ) {
             float speed = 0;
             //Console.Out.WriteLine( player.playerActions.Movement.Sprint.ReadValue<float>( ) );
-            //if ( player.playerActions.Movement.Sprint.ReadValue<float>( ) == 1 && player.sprintMeter > 0 ) { // checks if player is sprinting or not and sets ground speed
+            //if ( player.playerActions.Movement.Sprint.ReadValue<float>( ) == 1 && player.sprintMeter > 0.3 ) { //?? checks if player is sprinting or not and sets ground speed
             if ( player.isSprinting ) { // checks if player is sprinting or not and sets ground speed
                 speed = movespeed;
                 //Console.Out.WriteLine( "sprinting" );
