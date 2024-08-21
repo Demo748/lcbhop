@@ -57,7 +57,7 @@ namespace lcbhop {
             // Allow crouching while mid air
             player.fallValue = 0.0f;
             // Disables fall damage
-            if ( !Plugin.cfg.falldmg ) { player.fallValueUncapped = 0.0f; } //else { player.fallValueUncapped }
+            if ( !Plugin.cfg.falldmg ) { player.fallValueUncapped = 0.0f; }
             // Disable stamina drain if toggle is false
             if ( !Plugin.cfg.staminadrain ) { player.sprintMeter = 1.0f; }
 
@@ -124,22 +124,13 @@ namespace lcbhop {
         /*
          * Sets the movement direction based on player input
          */
-        //private void SetMovementDir( ) {
-        //    //if ( _controller.isGrounded ) { movespeed }
-        //    _cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * movespeed;
-        //    _cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * movespeed;
-        //}
-
         private void SetMovementDir( ) {
             float speed = 0;
-            //Console.Out.WriteLine( player.playerActions.Movement.Sprint.ReadValue<float>( ) );
-            //if ( player.playerActions.Movement.Sprint.ReadValue<float>( ) == 1 && player.sprintMeter > 0.3 ) { //?? checks if player is sprinting or not and sets ground speed
-            if ( player.isSprinting ) { // checks if player is sprinting or not and sets ground speed
+            // Checks if player is sprinting or not and sets ground speed
+            if ( player.isSprinting ) {
                 speed = movespeed;
-                //Console.Out.WriteLine( "sprinting" );
-            } else { //if ( player.playerActions.Movement.Sprint.ReadValue<float>( ) == 0 ) {
+            } else {
                 speed = walkspeed;
-                //Console.Out.WriteLine( "walking" );
             }
             //Console.Out.WriteLine( "Speed: " + speed );
 
@@ -156,12 +147,14 @@ namespace lcbhop {
             if ( Plugin.cfg.autobhop ) {
                 wishJump = player.playerActions.Movement.Jump.ReadValue<float>( ) > 0.0f;
                 //wishJump = player.isJumping; // private var, assembly needs to be Publicized
-            } else if ( !wishJump ) { 
-                wishJump = player.playerActions.Movement.SwitchItem.ReadValue<float>( ) != 0.0f;
+            } else if ( !wishJump ) {
+                //wishJump = player.playerActions.Movement.SwitchItem.ReadValue<float>( ) != 0.0f;
+                wishJump = player.playerActions.Movement.SwitchItem.ReadValue<float>( ) < 0f; // Jump only if you scroll down
             }
 
-            if ( !Plugin.cfg.enablebunnyhopping )
+            if ( !Plugin.cfg.enablebunnyhopping ) {
                 PreventMegaBunnyJumping( );
+            }
         }
 
         /*
@@ -223,6 +216,10 @@ namespace lcbhop {
 
             if ( wishJump ) {
                 velocity.y = 295;
+
+                // Jump audio for server and client
+                player.PlayJumpAudio( );
+                player.PlayerJumpedServerRpc( );
 
                 // Animate player jumping, this is a bit tricky since its a private method (there's probably a better way to do this)
                 /* XXX: This messes with the animator and makes you not be able to crouch, couldnt figure it out yet!

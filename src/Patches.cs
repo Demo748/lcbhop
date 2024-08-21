@@ -53,27 +53,29 @@ namespace lcbhop {
     [HarmonyPatch( typeof( PlayerControllerB ), "ScrollMouse_performed" )]
     class ScrollMouse_performed_Patch {
         [HarmonyPrefix]
-        internal static bool Prefix( ref InputAction.CallbackContext context ) {
+        internal static bool Prefix( PlayerControllerB __instance, ref InputAction.CallbackContext context ) {
             // Patch scrolling in the hotbar if not autobhopping
-            return Plugin.cfg.autobhop;
+            // Default scrolling behaviour when autohopping, in terminal, or mwheelup scroll
+            return Plugin.cfg.autobhop || context.ReadValue<float>( ) > 0f || __instance.inTerminalMenu;
         }
     }
 
     [HarmonyPatch( typeof( PlayerControllerB ), "PlayerHitGroundEffects" )]
     class PlayerHitGroundEffects_Patch {
-        
+        // Fall damage and landing audio fix, overwrites method and applies a multiplier to fallvalues
+        // Fallvalues get large very fast, moreso than vanilla, physics related? (single regular jump can see ~ -35f which is close to damage threshold of -38, vanilla is much lower ~ -14)
         [HarmonyPrefix]
         internal static bool Prefix( PlayerControllerB __instance ) {
             double fallMultiplier = 1.7;
             __instance.GetCurrentMaterialStandingOn( );
             if ( __instance.fallValueUncapped < -9f ) {
-                if ( __instance.fallValueUncapped < -16f ) {
-                    __instance.movementAudio.PlayOneShot( StartOfRound.Instance.playerHitGroundSoft, 1f );
+                if ( __instance.fallValueUncapped < -16f * 2) { // audio off slightly
+                    __instance.movementAudio.PlayOneShot( StartOfRound.Instance.playerHitGroundHard, 1f );
                     WalkieTalkie.TransmitOneShotAudio( __instance.movementAudio, StartOfRound.Instance.playerHitGroundHard, 1f );
-                } else if ( __instance.fallValueUncapped < -2f ) {
+                } else if ( __instance.fallValueUncapped < -2f ) { 
                     __instance.movementAudio.PlayOneShot( StartOfRound.Instance.playerHitGroundSoft, 1f );
                 }
-                __instance.LandFromJumpServerRpc( __instance.fallValueUncapped < -16f );
+                __instance.LandFromJumpServerRpc( __instance.fallValueUncapped < -16f * 2 ); // try adjusting these for landing audio to align closer to vanilla
             }
             float num = __instance.fallValueUncapped;
             if ( __instance.disabledJetpackControlsThisFrame && Vector3.Angle( __instance.transform.up, Vector3.up ) > 80f ) {
@@ -90,7 +92,7 @@ namespace lcbhop {
                     __instance.DamagePlayer( 30, true, true, CauseOfDeath.Gravity, 0, false, default( Vector3 ) );
                 }
             }
-            if ( __instance.fallValueUncapped < -16f ) {
+            if ( __instance.fallValueUncapped < -16f * 2) { //
                 RoundManager.Instance.PlayAudibleNoise( __instance.transform.position, 7f, 0.5f, 0, false, 0 );
             }
 
