@@ -120,7 +120,7 @@ namespace lcbhop {
         internal static bool Prefix( HUDManager __instance ) {
             string text = __instance.chatTextField.text;
 
-            if ( text.StartsWith( "/autobhop" ) ) {
+            if ( text.StartsWith( "/autobhop" ) || text.StartsWith( "/autohop" ) || text.StartsWith( "/ahop" ) ) {
                 Plugin.cfg.autobhop = !Plugin.cfg.autobhop;
             } else if ( text.StartsWith( "/speedo" ) ) {
                 Plugin.cfg.speedometer = !Plugin.cfg.speedometer;
