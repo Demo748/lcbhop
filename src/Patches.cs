@@ -42,7 +42,21 @@ namespace lcbhop {
     [HarmonyPatch( typeof( PlayerControllerB ), "Jump_performed" )]
     class Jump_performed_Patch {
         [HarmonyPrefix]
-        internal static bool Prefix( ref InputAction.CallbackContext context ) {
+        internal static bool Prefix( PlayerControllerB __instance, ref InputAction.CallbackContext context ) {
+            // Beginning of original method to stop jumping when pressing spacebar in chat
+            if ( __instance.quickMenuManager.isMenuOpen ) {
+                return false;
+            }
+            if ( ( !__instance.IsOwner || !__instance.isPlayerControlled || ( __instance.IsServer && !__instance.isHostPlayerObject ) ) && !__instance.isTestingPlayer ) {
+                return false;
+            }
+            if ( __instance.inSpecialInteractAnimation ) {
+                return false;
+            }
+            if ( __instance.isTypingChat ) {
+                return false;
+            }
+
             Plugin.player.wishJump = true;
 
             // Patch jumping animation, we call it on our own
