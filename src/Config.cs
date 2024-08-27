@@ -37,8 +37,8 @@ namespace lcbhop {
             gravity = config.Bind( "Move Vars", "Gravity", 800.0f, "Gravity." ).Value;
             friction = config.Bind( "Move Vars", "Friction", 4.0f, "Ground friction." ).Value;
             maxspeed = config.Bind( "Move Vars", "Max Speed", 320.0f, "Max speed per tick." ).Value;
-            movespeed = config.Bind( "Move Vars", "Move Speed", 250.0f, "Ground Sprint speed (like cl_forwardspeed etc.)." ).Value;
-            walkspeed = config.Bind( "Move Vars", "Walking Speed", 125.0f, "Ground Walk speed (like cl_forwardspeed etc.)." ).Value;
+            movespeed = config.Bind( "Move Vars", "Move Speed", 300.0f, "Ground Sprint speed (like cl_forwardspeed etc.)." ).Value;
+            walkspeed = config.Bind( "Move Vars", "Walking Speed", 150.0f, "Ground Walk speed (like cl_forwardspeed etc.)." ).Value;
 
             accelerate = config.Bind( "Move Vars", "Accelerate", 5.0f, "Ground acceleration." ).Value;
             airaccelerate = config.Bind( "Move Vars", "Air Accelerate", 10.0f, "Air acceleration." ).Value;
