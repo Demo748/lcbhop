@@ -132,7 +132,9 @@ namespace lcbhop {
             } else {
                 speed = walkspeed;
             }
-            //Console.Out.WriteLine( "Speed: " + speed );
+            // Adjust speed based on weight
+            //Console.Out.WriteLine( "Speed: " + speed / player.carryWeight );
+            speed /= player.carryWeight; // This variable is pre calculated somewhere using formula: 1 + (TOTALWEIGHT / 105)
 
             //_cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * speed;
             //_cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * speed;
