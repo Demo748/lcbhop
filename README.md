@@ -27,6 +27,13 @@ Movement code based on [quake3-movement-unity3d](https://github.com/WiggleWizard
 - Fixed scrollwheel not working in terminal
 - Fixed pressing spacebar in chat queuing a jump when closed
 
+#### Known issues:
+- Opening chat interrupts movement, freezes player mid-air
+- Jump animation not used
+- Any non-overhang slopes are climbable
+- Friction/falling issue when moving downhill
+- Fall damage is a bandaid solution (not perfectly vanilla)
+
 ### 1.3.1
 - Fix bhop speed cap limiting vertical velocity.
 
