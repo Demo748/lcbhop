@@ -76,6 +76,8 @@ namespace lcbhop {
                 return;
             }
 
+            Console.WriteLine( "injured: " + player.criticallyInjured );
+
             /* Movement, here's the important part */
             Jump( );
 
@@ -132,9 +134,45 @@ namespace lcbhop {
             } else {
                 speed = walkspeed;
             }
-            // Adjust speed based on weight
             //Console.Out.WriteLine( "Speed: " + speed / player.carryWeight );
+            player.CalculateGroundNormal( ); // Default logic
+            // Adjust speed based on weight
             speed /= player.carryWeight; // This variable is pre calculated somewhere using formula: 1 + (TOTALWEIGHT / 105)
+
+            // Default logic
+            if ( player.sinkingValue > 0.73f ) {
+                speed = 0f;
+            } else {
+                if ( player.isCrouching ) {
+                    speed /= 1.5f;
+                } else if ( player.criticallyInjured && !player.isCrouching ) {
+                    speed *= player.limpMultiplier;
+                }
+                if ( player.isSpeedCheating ) {
+                    speed *= 15f;
+                }
+                if ( player.movementHinderedPrev > 0 ) {
+                    speed /= 2f * player.hinderedMultiplier;
+                }
+                if ( player.drunkness > 0f ) {
+                    speed *= StartOfRound.Instance.drunknessSpeedEffect.Evaluate( player.drunkness ) / 5f + 1f;
+                }
+                if ( !player.isCrouching && player.crouchMeter > 1.2f ) {
+                    speed *= 0.5f;
+                }
+                if ( !player.isCrouching ) {
+                    float num4 = Vector3.Dot( player.playerGroundNormal, player.walkForce );
+                    if ( num4 > 0.05f ) {
+                        player.slopeModifier = Mathf.MoveTowards( player.slopeModifier, num4, ( player.slopeModifierSpeed + 0.45f ) * Time.deltaTime );
+                    } else {
+                        player.slopeModifier = Mathf.MoveTowards( player.slopeModifier, num4, player.slopeModifierSpeed / 2f * Time.deltaTime );
+                    }
+                    speed = Mathf.Max( speed * 0.8f, speed + player.slopeIntensity * player.slopeModifier );
+                }
+            }
+            if ( player.isTypingChat || ( player.jetpackControls && !player.thisController.isGrounded ) || StartOfRound.Instance.suckingPlayersOutOfShip ) {
+                player.moveInputVector = Vector2.zero;
+            }
 
             //_cmd.forwardMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).y * speed;
             //_cmd.rightMove = player.playerActions.Movement.Move.ReadValue<Vector2>( ).x * speed;
