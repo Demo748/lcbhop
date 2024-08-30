@@ -4,7 +4,7 @@
 Bhop mod featuring *real* **Bhop** movement in Lethal Company.
 
 Chat commands:
-- /autobhop - Toggles auto bhop mode.
+- /autobhop, /autohop, /ahop - Toggles auto bhop mode.
 - /speedo - Toggles Speedometer HUD.
 
 Requires [ItemQuickSwitch](https://thunderstore.io/c/lethal-company/p/vasanex/ItemQuickSwitch/) if not using auto bhop mode!
@@ -12,6 +12,20 @@ Requires [ItemQuickSwitch](https://thunderstore.io/c/lethal-company/p/vasanex/It
 Movement code based on [quake3-movement-unity3d](https://github.com/WiggleWizard/quake3-movement-unity3d/tree/master), modified to match [halflife](https://github.com/ValveSoftware/halflife/blob/master/pm_shared/pm_shared.c)
 
 ## Changelog
+
+### 1.4.0
+- **EITHER DELETE YOUR PREVIOUS CONFIG TO UPDATE OR CHANGE MOVE SPEED TO 300**
+- Added config to toggle fall damage, stamina drain
+- Added separate walking speed movevar to config
+- Added alternate commands to toggle autohop:
+  - /ahop
+  - /autohop
+- Added in vanilla movement speed behaviour while carrying items, crouching, or limping
+- Adjusted default movevar for sprinting to match vanilla speed
+- Changed scrollhopping to only accept mwheeldown inputs, mwheelup is default hotbar scrolling
+- Fixed jump and landing audio not playing
+- Fixed scrollwheel not working in terminal
+- Fixed pressing spacebar in chat queuing a jump when closed
 
 ### 1.3.1
 - Fix bhop speed cap limiting vertical velocity.
