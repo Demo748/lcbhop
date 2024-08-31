@@ -76,7 +76,7 @@ namespace lcbhop {
                 return;
             }
 
-            Console.WriteLine( "injured: " + player.criticallyInjured );
+            //Console.WriteLine( "injured: " + player.criticallyInjured );
 
             /* Movement, here's the important part */
             Jump( );
